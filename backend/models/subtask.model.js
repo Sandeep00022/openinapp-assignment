@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import mongoose from "mongoose";
+
 
 const subTaskSchema = mongoose.Schema(
   {
@@ -11,7 +11,7 @@ const subTaskSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    task: {
+    task_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Task",
       required: true,
@@ -25,6 +25,11 @@ const subTaskSchema = mongoose.Schema(
       type: Date,
       default: null,
     },
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
     deleted_at: {
       type: Date,
       default: null,
@@ -33,8 +38,11 @@ const subTaskSchema = mongoose.Schema(
       type: Date,
       default: Date.now,
     },
-  },
-  { timestamps: true }
+    deleted: {
+        type: Boolean,
+        default: false  
+      }
+  }
 );
 
 const Subtask = mongoose.model("Subtask", subTaskSchema);

@@ -19,6 +19,10 @@ const taskSchema = mongoose.Schema({
     enum: [0, 1, 2, 3],
     default: 3,
   },
+  deleted: {
+    type: Boolean,
+    default: false, 
+  },
 });
 
 const Task = mongoose.model("Task", taskSchema);

@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 //local modules
 import userRouter from "./routes/user.routes.js";
 import taskRouter from "./routes/task.routes.js";
+import subtaskRouter from "./routes/subtask.routes.js";
 import connection from "./config/db.config.js";
 
 const app = express();
@@ -15,6 +16,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/user", userRouter);
 app.use("/api/task", taskRouter);
+app.use("/api/subtask", subtaskRouter);
 const port = 3000;
 
 app.listen(port, () => {
