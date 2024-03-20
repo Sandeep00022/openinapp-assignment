@@ -7,7 +7,7 @@ const userSchema = mongoose.Schema({
     unique: true,
   },
   priority: {
-    type: [Number],
+    type: Number,
     enum: [0, 1, 2, 3],
     default: null,
   },

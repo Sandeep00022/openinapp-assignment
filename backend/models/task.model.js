@@ -19,14 +19,9 @@ const taskSchema = mongoose.Schema({
     type: Date,
     required: true,
   },
-  priority: {
-    type: Number,
-    enum: [0, 1, 2, 3],
-    default: 3,
-  },
   deleted: {
     type: Boolean,
-    default: false, 
+    default: false,
   },
 });
 

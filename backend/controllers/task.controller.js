@@ -1,8 +1,14 @@
 import Task from "../models/task.model.js";
+import User from "../models/user.model.js";
 import { checkDueDate } from "../utils/dueDateChecker.js";
 import { errorHandler } from "../utils/error.js";
 import { getDueDateNumber } from "../utils/getDueDateNumber.js";
 import cron from "node-cron";
+import twilio from "twilio";
+
+const accountSid = process.env.ACCOUNT_SID;
+const authToken = process.env.TWILIO_TOKEN;
+const client = twilio(accountSid, authToken);
 
 // create task
 export const createTask = async (req, res, next) => {
@@ -27,12 +33,18 @@ export const createTask = async (req, res, next) => {
       priority = 3;
     }
 
+    const taskPresent = await Task.findOne({ title });
+    if (taskPresent) {
+      return next(errorHandler(400, "Task already exists"));
+    }
+
     const task = await Task.create({
       title,
       user,
       due_Date,
-      priority,
     });
+
+    await User.findByIdAndUpdate(user, { priority });
 
     task.save();
 
@@ -107,18 +119,48 @@ export const updateTask = async (req, res, next) => {
   }
 };
 
-
 //updating priority of task using cron logic
 cron.schedule("0 0 * * *", async (req, res, next) => {
   try {
-    const tasks = await Task.find();
+    const Users = await User.find();
 
-    for (let i = 0; i < tasks.length; i++) {
-      tasks[i].priority = getDueDateNumber(tasks[i].due_Date);
-      tasks[i].save();
+    for (let i = 0; i < Users.length; i++) {
+      if (Users[i].priority >= 1) {
+        User[i].priority = User[i].priority - 1;
+        User[i].save();
+      }
     }
   } catch (error) {
     next(error);
   }
 });
 
+// making call based on priority
+cron.schedule("0 * * * *", async (req, res, next) => {
+  try {
+    let tasks = await Task.find().populate("user");
+    tasks = tasks.sort((a, b) => {
+      a.user.priority > b.user.priority;
+    });
+    console.log(tasks);
+
+    for (let i = 0; i < tasks.length; i++) {
+      if (tasks[i].user.priority <= 3) {
+        console.log("kar diya call");
+        client.calls
+          .create({
+            twiml:
+              "<Response><Say>Your deadline is near please complete your task as soon as possible</Say></Response>",
+            to: `+91${tasks[i].user.phone_number}`,
+            from: process.env.MY_NUMBER,
+          })
+          .then((call) => {
+            console.log(call.sid);
+            console.log("status", call.status);
+          });
+      }
+    }
+  } catch (error) {
+    console.error("Error making call:", error);
+  }
+});
