@@ -1,19 +1,20 @@
 // external modules
 import express from "express";
-
+import cookieParser from "cookie-parser";
 //local modules
 import userRouter from "./routes/user.routes.js";
+import taskRouter from "./routes/task.routes.js";
 import connection from "./config/db.config.js";
 
 const app = express();
 app.use(express.json());
-
+app.use(cookieParser());
 app.get("/", (req, res) => {
   res.send("Hello World");
 });
 
 app.use("/api/user", userRouter);
-
+app.use("/api/task", taskRouter);
 const port = 3000;
 
 app.listen(port, () => {

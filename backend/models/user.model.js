@@ -8,10 +8,9 @@ const userSchema = mongoose.Schema({
   },
   priority: {
     type: [Number],
-    enum: [0, 1, 2],
+    enum: [0, 1, 2, 3],
+    default: null,
   },
-  verificationCode: String,
-  verificationCodeTimeout: String,
 });
 
 const User = mongoose.model("User", userSchema);

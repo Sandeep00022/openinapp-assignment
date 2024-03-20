@@ -26,10 +26,8 @@ export const verifyCode = async (req, res, next) => {
     let user = await User.findOne({ phone_number: phone_number });
 
     if (!user) {
-      const hashedPhoneNumber = await bcryptjs.hash(phone_number, 10);
-
       user = new User({
-        phone_number: hashedPhoneNumber,
+        phone_number: phone_number,
         priority: null,
       });
     }
