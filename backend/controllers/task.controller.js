@@ -142,6 +142,8 @@ export const updateTask = async (req, res, next) => {
       task.due_Date = due_Date;
       task.status = status;
     }
+    
+    
 
     await task.save();
     res.status(200).json({
@@ -170,13 +172,13 @@ cron.schedule("0 0 * * *", async (req, res, next) => {
 });
 
 // making call based on priority
-cron.schedule("0 * * * *", async (req, res, next) => {
+cron.schedule("30 9 * * *", async (req, res, next) => {
   try {
     let tasks = await Task.find().populate("user");
+    console.log(tasks);
     tasks = tasks.sort((a, b) => {
       a.user.priority > b.user.priority;
     });
-    console.log(tasks);
 
     for (let i = 0; i < tasks.length; i++) {
       if (tasks[i].user.priority <= 3) {

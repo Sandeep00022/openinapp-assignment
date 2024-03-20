@@ -37,7 +37,7 @@ export const createSubTask = async (req, res, next) => {
 export const getSubTasks = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    console.log(userId)
+    console.log(userId);
     const subtasks = await Subtask.find({ user: userId });
     if (!subtasks) {
       return next(errorHandler(404, "No such user exists"));
@@ -64,7 +64,7 @@ export const updateSubtask = async (req, res, next) => {
   try {
     const updateSubTask = await Subtask.findByIdAndUpdate(
       subtask_id,
-      req.body,
+      { ...req.body, updated_at: new Date() },
       {
         new: true,
       }
@@ -90,7 +90,7 @@ export const deleteSubTask = async (req, res, next) => {
 
   const deletedSubTask = await Subtask.findByIdAndUpdate(
     subtask_id,
-    { deleted: true },
+    { deleted: true, deleted_at: new Date() },
     { new: true }
   );
 
