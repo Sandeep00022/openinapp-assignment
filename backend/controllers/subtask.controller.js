@@ -1,6 +1,7 @@
 import Subtask from "../models/subtask.model.js";
 import { errorHandler } from "../utils/error.js";
 
+//create sub tasks
 export const createSubTask = async (req, res, next) => {
   const { id } = req.user;
   const { task_id, title, description, status, user } = req.body;
@@ -32,8 +33,26 @@ export const createSubTask = async (req, res, next) => {
   }
 };
 
-// update subTask
+// get sub tasks
+export const getSubTasks = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    console.log(userId)
+    const subtasks = await Subtask.find({ user: userId });
+    if (!subtasks) {
+      return next(errorHandler(404, "No such user exists"));
+    }
+    res.status(200).json({
+      status: "success",
+      message: "Subtasks fetched successfully",
+      data: subtasks,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
+// update subTask
 export const updateSubtask = async (req, res, next) => {
   const { id } = req.user;
   const { subtask_id } = req.params;
@@ -60,6 +79,7 @@ export const updateSubtask = async (req, res, next) => {
   }
 };
 
+// delete sub tasks
 export const deleteSubTask = async (req, res, next) => {
   const { id } = req.user;
   const { subtask_id, user_id } = req.params;

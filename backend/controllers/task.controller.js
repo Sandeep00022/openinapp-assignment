@@ -57,6 +57,40 @@ export const createTask = async (req, res, next) => {
   }
 };
 
+// get All tasks
+
+export const getAllTasks = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+
+    const filterData = { user: userId };
+
+    if (req.query.status) {
+      filterData.status = req.query.status;
+    }
+
+    if (req.query.due_Date) {
+      filterData.due_Date = req.query.due_Date;
+    }
+
+    //pagination
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const tasks = await Task.find(filterData).skip(skip).limit(limit);
+    const count = await Task.countDocuments(filterData);
+
+    res.status(200).json({
+      success: true,
+      data: { tasks, count },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // delete tasks
 export const deleteTask = async (req, res, next) => {
   const { id } = req.user;
