@@ -7,7 +7,7 @@ export function checkDueDate(dueDate) {
 
   dueDateObj.setHours(0, 0, 0, 0);
 
-  if (dueDateObj <= currentDate) {
+  if (dueDateObj < currentDate) {
     return false;
   } else {
     return true;

@@ -2,6 +2,7 @@ import Task from "../models/task.model.js";
 import { checkDueDate } from "../utils/dueDateChecker.js";
 import { errorHandler } from "../utils/error.js";
 import { getDueDateNumber } from "../utils/getDueDateNumber.js";
+import cron from "node-cron";
 
 // create task
 export const createTask = async (req, res, next) => {
@@ -88,8 +89,7 @@ export const updateTask = async (req, res, next) => {
     if (!due_Date) {
       task.due_Date = task.due_Date;
       task.status = status;
-    }
-   else if (!status) {
+    } else if (!status) {
       task.status = task.status;
       task.due_Date = due_Date;
     } else {
@@ -106,3 +106,19 @@ export const updateTask = async (req, res, next) => {
     next(error);
   }
 };
+
+
+//updating priority of task using cron logic
+cron.schedule("0 0 * * *", async (req, res, next) => {
+  try {
+    const tasks = await Task.find();
+
+    for (let i = 0; i < tasks.length; i++) {
+      tasks[i].priority = getDueDateNumber(tasks[i].due_Date);
+      tasks[i].save();
+    }
+  } catch (error) {
+    next(error);
+  }
+});
+
