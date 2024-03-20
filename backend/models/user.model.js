@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const userSchema = mongoose.Schema({
   phone_number: {
-    type: Number,
+    type: String,
     required: true,
     unique: true,
   },
@@ -10,6 +10,8 @@ const userSchema = mongoose.Schema({
     type: [Number],
     enum: [0, 1, 2],
   },
+  verificationCode: String,
+  verificationCodeTimeout: String,
 });
 
 const User = mongoose.model("User", userSchema);
