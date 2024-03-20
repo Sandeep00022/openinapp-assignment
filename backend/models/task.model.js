@@ -10,6 +10,11 @@ const taskSchema = mongoose.Schema({
     ref: "User",
     required: true,
   },
+  status: {
+    type: Number,
+    enum: [0, 1],
+    default: 0,
+  },
   due_Date: {
     type: Date,
     required: true,
